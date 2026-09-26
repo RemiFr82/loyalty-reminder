@@ -1,3 +1,4 @@
+# License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl.html).
 from dateutil.relativedelta import relativedelta
 
 from odoo import Command, api, fields, models

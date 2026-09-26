@@ -1,6 +1,6 @@
 {
     "name": "Loyalty Reminder",
-    "version": "17.0.1.0.3",
+    "version": "17.0.1.0.4",
     "summary": "Rappels email sur seuil de solde ou échéance de carte de fidélité",
     "description": (
         "Envoie un email de rappel automatique au titulaire d'une carte de fidélité "
@@ -13,7 +13,7 @@
     "contributors": "",
     "maintainers": ["RemiFr82"],
     "website": "https://remifr82.me",
-    "license": "OPL-1",
+    "license": "LGPL-3",
     "price": 69.00,
     "currency": "EUR",
     "development_status": "Alpha",
