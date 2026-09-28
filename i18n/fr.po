@@ -1,0 +1,228 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* loyalty_reminder
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 17.0-20260908\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-09-28 10:00+0000\n"
+"PO-Revision-Date: 2026-09-28 10:00+0000\n"
+"Last-Translator: \n"
+"Language-Team: French\n"
+"Language: fr\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+#. module: loyalty_reminder
+#: model:ir.model.fields,field_description:loyalty_reminder.field_loyalty_card_reminder_line__active
+msgid "Active"
+msgstr "Actif"
+
+#. module: loyalty_reminder
+#: model:ir.model.fields,help:loyalty_reminder.field_loyalty_card_reminder_line__active
+msgid ""
+"Automatically unchecked once the reminder has been sent (duplicate guard) "
+"- mostly a display status, the card and its lines are kept."
+msgstr ""
+"Décoché automatiquement une fois le rappel envoyé (anti-doublon) - sert "
+"surtout à l'affichage, la carte et ses lignes restent conservées."
+
+#. module: loyalty_reminder
+#: model:ir.model.fields.selection,name:loyalty_reminder.selection__loyalty_card_reminder_line__trigger_type__before_expiry
+#: model:ir.model.fields.selection,name:loyalty_reminder.selection__loyalty_program_reminder_line__trigger_type__before_expiry
+msgid "Before Expiry"
+msgstr "Avant échéance"
+
+#. module: loyalty_reminder
+#: model:ir.model.fields,field_description:loyalty_reminder.field_loyalty_card_reminder_line__card_id
+msgid "Card"
+msgstr "Carte"
+
+#. module: loyalty_reminder
+#: model:ir.model.fields,help:loyalty_reminder.field_loyalty_card_reminder_line__card_id
+msgid "Card carrying this effective reminder line."
+msgstr "Carte portant cette ligne de rappel effective."
+
+#. module: loyalty_reminder
+#: model:ir.model.fields,field_description:loyalty_reminder.field_loyalty_card_reminder_line__create_uid
+#: model:ir.model.fields,field_description:loyalty_reminder.field_loyalty_program_reminder_line__create_uid
+msgid "Created by"
+msgstr "Créé par"
+
+#. module: loyalty_reminder
+#: model:ir.model.fields,field_description:loyalty_reminder.field_loyalty_card_reminder_line__create_date
+#: model:ir.model.fields,field_description:loyalty_reminder.field_loyalty_program_reminder_line__create_date
+msgid "Created on"
+msgstr "Créé le"
+
+#. module: loyalty_reminder
+#: model:ir.model.fields,help:loyalty_reminder.field_loyalty_program_reminder_line__trigger_type
+msgid ""
+"Criterion triggering the sending: remaining points balance, or proximity "
+"of the card expiry date."
+msgstr ""
+"Critère déclenchant l'envoi : solde de points restant, ou proximité de "
+"l'échéance de la carte."
+
+#. module: loyalty_reminder
+#: model:ir.model.fields,field_description:loyalty_reminder.field_loyalty_card_reminder_line__days_before
+#: model:ir.model.fields,field_description:loyalty_reminder.field_loyalty_program_reminder_line__days_before
+msgid "Days Before Expiry"
+msgstr "Nombre de jours avant échéance"
+
+#. module: loyalty_reminder
+#: model:ir.model.fields,help:loyalty_reminder.field_loyalty_program__reminder_line_ids
+msgid ""
+"Default reminder lines, copied onto every new card of this program "
+"(overridable independently per card afterwards)."
+msgstr ""
+"Lignes de rappel par défaut, copiées sur chaque nouvelle carte de ce "
+"programme (overridables ensuite indépendamment par carte)."
+
+#. module: loyalty_reminder
+#: model:ir.model.fields,field_description:loyalty_reminder.field_loyalty_card_reminder_line__display_name
+#: model:ir.model.fields,field_description:loyalty_reminder.field_loyalty_program_reminder_line__display_name
+msgid "Display Name"
+msgstr "Nom affiché"
+
+#. module: loyalty_reminder
+#: model:ir.model.fields,help:loyalty_reminder.field_loyalty_card__reminder_line_ids
+msgid ""
+"Effective reminder lines of the card, copied from the program at creation "
+"then overridable independently. `active_test: False` is required here: "
+"`active` is only a display status (reminder already sent), not standard "
+"Odoo archiving - without this context, the ORM silently hides the "
+"deactivated lines of this One2many (including in Python, not only in the "
+"views), which would empty `reminder_line_ids` as soon as a reminder has "
+"been sent."
+msgstr ""
+"Lignes de rappel effectives de la carte, copiées depuis le programme à la "
+"création puis overridables indépendamment. `active_test: False` est requis "
+"ici : `active` sert uniquement de statut d'affichage (rappel déjà envoyé), "
+"pas d'archivage Odoo standard - sans ce contexte, l'ORM masque "
+"silencieusement les lignes désactivées de ce One2many (y compris en "
+"Python, pas seulement dans les vues), ce qui viderait `reminder_line_ids` "
+"dès qu'un rappel a été envoyé."
+
+#. module: loyalty_reminder
+#: model:ir.model.fields,field_description:loyalty_reminder.field_loyalty_card_reminder_line__mail_template_id
+#: model:ir.model.fields,field_description:loyalty_reminder.field_loyalty_program_reminder_line__mail_template_id
+msgid "Email Template"
+msgstr "Modèle de courriel"
+
+#. module: loyalty_reminder
+#: model:ir.model.fields,field_description:loyalty_reminder.field_loyalty_card_reminder_line__id
+#: model:ir.model.fields,field_description:loyalty_reminder.field_loyalty_program_reminder_line__id
+msgid "ID"
+msgstr "ID"
+
+#. module: loyalty_reminder
+#: model:ir.model.fields,field_description:loyalty_reminder.field_loyalty_card_reminder_line__write_uid
+#: model:ir.model.fields,field_description:loyalty_reminder.field_loyalty_program_reminder_line__write_uid
+msgid "Last Updated by"
+msgstr "Dernière mise à jour par"
+
+#. module: loyalty_reminder
+#: model:ir.model.fields,field_description:loyalty_reminder.field_loyalty_card_reminder_line__write_date
+#: model:ir.model.fields,field_description:loyalty_reminder.field_loyalty_program_reminder_line__write_date
+msgid "Last Updated on"
+msgstr "Dernière mise à jour le"
+
+#. module: loyalty_reminder
+#: model:ir.model,name:loyalty_reminder.model_loyalty_card_reminder_line
+msgid "Loyalty Card Reminder Line (Effective Configuration)"
+msgstr "Ligne de rappel de carte de fidélité (configuration effective)"
+
+#. module: loyalty_reminder
+#: model:ir.model,name:loyalty_reminder.model_loyalty_card
+msgid "Loyalty Coupon"
+msgstr "Coupon de fidélité"
+
+#. module: loyalty_reminder
+#: model:ir.model,name:loyalty_reminder.model_loyalty_program
+msgid "Loyalty Program"
+msgstr "Programme de fidélité"
+
+#. module: loyalty_reminder
+#: model:ir.model,name:loyalty_reminder.model_loyalty_program_reminder_line
+msgid "Loyalty Program Reminder Line (Default Configuration)"
+msgstr "Ligne de rappel de programme de fidélité (configuration par défaut)"
+
+#. module: loyalty_reminder
+#: model:ir.model.fields,help:loyalty_reminder.field_loyalty_program_reminder_line__days_before
+msgid ""
+"Number of days before the card expiry date (loyalty.card.expiration_date) "
+"from which the reminder is sent. Only used by the 'Before Expiry' trigger."
+msgstr ""
+"Nombre de jours avant l'échéance de la carte "
+"(loyalty.card.expiration_date) à partir duquel le rappel est envoyé. "
+"Utilisé uniquement par le déclencheur 'Avant échéance'."
+
+#. module: loyalty_reminder
+#: model:ir.model.fields.selection,name:loyalty_reminder.selection__loyalty_card_reminder_line__trigger_type__points_remaining
+#: model:ir.model.fields.selection,name:loyalty_reminder.selection__loyalty_program_reminder_line__trigger_type__points_remaining
+msgid "Points Remaining"
+msgstr "Points restants"
+
+#. module: loyalty_reminder
+#: model:ir.model.fields,field_description:loyalty_reminder.field_loyalty_card_reminder_line__points_remaining
+#: model:ir.model.fields,field_description:loyalty_reminder.field_loyalty_program_reminder_line__points_remaining
+msgid "Points Remaining Threshold"
+msgstr "Seuil de points restants"
+
+#. module: loyalty_reminder
+#: model:ir.model.fields,field_description:loyalty_reminder.field_loyalty_program_reminder_line__program_id
+msgid "Program"
+msgstr "Programme"
+
+#. module: loyalty_reminder
+#: model:ir.model.fields,help:loyalty_reminder.field_loyalty_program_reminder_line__program_id
+msgid "Program carrying this default reminder line."
+msgstr "Programme portant cette ligne de rappel par défaut."
+
+#. module: loyalty_reminder
+#: model:ir.model.fields,help:loyalty_reminder.field_loyalty_program_reminder_line__points_remaining
+msgid ""
+"Remaining points balance at or below which the reminder is sent. Only used "
+"by the 'Points Remaining' trigger."
+msgstr ""
+"Solde de points restants en dessous ou à hauteur duquel le rappel est "
+"envoyé. Utilisé uniquement par le déclencheur 'Points restants'."
+
+#. module: loyalty_reminder
+#: model:ir.model.fields,field_description:loyalty_reminder.field_loyalty_card__reminder_line_ids
+#: model:ir.model.fields,field_description:loyalty_reminder.field_loyalty_program__reminder_line_ids
+msgid "Reminder Lines"
+msgstr "Lignes de rappel"
+
+#. module: loyalty_reminder
+#: model:mail.message.subtype,name:loyalty_reminder.mt_card_reminder_sent
+msgid "Reminder Sent"
+msgstr "Rappel envoyé"
+
+#. module: loyalty_reminder
+#: model_terms:ir.ui.view,arch_db:loyalty_reminder.loyalty_card_view_form_reminder
+#: model_terms:ir.ui.view,arch_db:loyalty_reminder.loyalty_program_view_form_reminder
+msgid "Reminders"
+msgstr "Rappels"
+
+#. module: loyalty_reminder
+#: model:ir.model.fields,field_description:loyalty_reminder.field_loyalty_card_reminder_line__sequence
+#: model:ir.model.fields,field_description:loyalty_reminder.field_loyalty_program_reminder_line__sequence
+msgid "Sequence"
+msgstr "Séquence"
+
+#. module: loyalty_reminder
+#: model:ir.model.fields,help:loyalty_reminder.field_loyalty_program_reminder_line__mail_template_id
+msgid "Template sent to the card holder when the trigger is satisfied."
+msgstr ""
+"Modèle envoyé au titulaire de la carte quand le déclencheur est satisfait."
+
+#. module: loyalty_reminder
+#: model:ir.model.fields,field_description:loyalty_reminder.field_loyalty_card_reminder_line__trigger_type
+#: model:ir.model.fields,field_description:loyalty_reminder.field_loyalty_program_reminder_line__trigger_type
+msgid "Trigger"
+msgstr "Déclencheur"

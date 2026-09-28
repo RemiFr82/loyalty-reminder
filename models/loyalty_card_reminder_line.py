@@ -9,7 +9,7 @@ class LoyaltyCardReminderLine(models.Model):
 
     card_id = fields.Many2one(
         "loyalty.card", string="Card", required=True, ondelete="cascade",
-        help="Carte portant cette ligne de rappel effective.",
+        help="Card carrying this effective reminder line.",
     )
     sequence = fields.Integer(default=10)
     trigger_type = fields.Selection(
@@ -27,6 +27,6 @@ class LoyaltyCardReminderLine(models.Model):
     )
     active = fields.Boolean(
         default=True,
-        help="Décoché automatiquement une fois le rappel envoyé (anti-doublon) — sert "
-             "surtout à l'affichage, la carte et ses lignes restent conservées.",
+        help="Automatically unchecked once the reminder has been sent (duplicate "
+             "guard) - mostly a display status, the card and its lines are kept.",
     )

@@ -12,12 +12,12 @@ class TestLoyaltyReminder(TransactionCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
-        cls.partner = cls.env["res.partner"].create({"name": "Client Test"})
-        cls.other_partner = cls.env["res.partner"].create({"name": "Autre Client"})
-        cls.mail_template = cls._create_template("Template Seuil")
-        cls.other_mail_template = cls._create_template("Template Echeance")
+        cls.partner = cls.env["res.partner"].create({"name": "Test Customer"})
+        cls.other_partner = cls.env["res.partner"].create({"name": "Other Customer"})
+        cls.mail_template = cls._create_template("Threshold Template")
+        cls.other_mail_template = cls._create_template("Expiry Template")
         cls.program = cls.env["loyalty.program"].create({
-            "name": "Programme Test",
+            "name": "Test Program",
             "program_type": "loyalty",
         })
 
@@ -26,8 +26,8 @@ class TestLoyaltyReminder(TransactionCase):
         return cls.env["mail.template"].create({
             "name": name,
             "model_id": cls.env["ir.model"]._get_id("loyalty.card"),
-            "subject": "Rappel",
-            "body_html": "<div>Rappel pour <t t-out=\"object.code\"/></div>",
+            "subject": "Reminder",
+            "body_html": "<div>Reminder for <t t-out=\"object.code\"/></div>",
         })
 
     def _create_card(self, partner, points=5, expiration_date=False, program=None):
@@ -47,7 +47,7 @@ class TestLoyaltyReminder(TransactionCase):
         values.update(extra)
         return self.env["loyalty.program.reminder.line"].create(values)
 
-    # -- Copie programme -> carte --------------------------------------
+    # -- Program -> card copy ------------------------------------------
 
     def test_reminder_lines_copied_from_program_on_card_creation(self):
         self._add_program_line("points_remaining", self.mail_template, points_remaining=1)
@@ -65,7 +65,7 @@ class TestLoyaltyReminder(TransactionCase):
         self.assertEqual(card_b.reminder_line_ids.points_remaining, 1)
         self.assertEqual(self.program.reminder_line_ids.points_remaining, 1)
 
-    # -- Déclenchement points_remaining ----------------------------------
+    # -- points_remaining trigger ----------------------------------------
 
     def test_points_remaining_triggers_at_threshold_not_before(self):
         self._add_program_line("points_remaining", self.mail_template, points_remaining=1)
@@ -106,7 +106,7 @@ class TestLoyaltyReminder(TransactionCase):
         self.assertFalse(self._reminder_message(card))
         self.assertTrue(card.exists())
 
-    # -- Déclenchement before_expiry -------------------------------------
+    # -- before_expiry trigger -------------------------------------------
 
     def test_before_expiry_triggers_within_window(self):
         self._add_program_line("before_expiry", self.other_mail_template, days_before=5)
@@ -146,7 +146,7 @@ class TestLoyaltyReminder(TransactionCase):
         self.assertTrue(self._reminder_message(card_a))
         self.assertTrue(self._reminder_message(card_b))
 
-    # -- Lignes multiples --------------------------------------------------
+    # -- Multiple lines ----------------------------------------------------
 
     def test_multiple_trigger_lines_send_independently(self):
         self._add_program_line("points_remaining", self.mail_template, points_remaining=1)
@@ -160,7 +160,7 @@ class TestLoyaltyReminder(TransactionCase):
         self.assertFalse(card.reminder_line_ids.mapped("active")[1])
         self.assertEqual(len(self._reminder_message(card)), 2)
 
-    # -- Traçabilité ---------------------------------------------------
+    # -- Traceability --------------------------------------------------
 
     def test_reminder_sent_traced_on_chatter_with_dedicated_subtype(self):
         self._add_program_line("points_remaining", self.mail_template, points_remaining=1)

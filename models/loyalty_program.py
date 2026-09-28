@@ -7,6 +7,6 @@ class LoyaltyProgram(models.Model):
 
     reminder_line_ids = fields.One2many(
         "loyalty.program.reminder.line", "program_id", string="Reminder Lines",
-        help="Lignes de rappel par défaut, copiées sur chaque nouvelle carte de ce "
-             "programme (overridables ensuite indépendamment par carte).",
+        help="Default reminder lines, copied onto every new card of this program "
+             "(overridable independently per card afterwards).",
     )

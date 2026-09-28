@@ -3,7 +3,7 @@
 <odoo noupdate="1">
 
     <record id="mt_card_reminder_sent" model="mail.message.subtype">
-        <field name="name">Rappel envoyé</field>
+        <field name="name">Reminder Sent</field>
         <field name="res_model">loyalty.card</field>
         <field name="default" eval="False"/>
         <field name="internal" eval="True"/>
