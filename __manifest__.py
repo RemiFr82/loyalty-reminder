@@ -1,13 +1,14 @@
+# License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl.html).
 {
     "name": "Loyalty Reminder",
-    "version": "17.0.1.0.4",
-    "summary": "Rappels email sur seuil de solde ou échéance de carte de fidélité",
+    "version": "17.0.1.0.5",
+    "summary": "Email reminders on loyalty card balance threshold or expiry date",
     "description": (
-        "Envoie un email de rappel automatique au titulaire d'une carte de fidélité "
-        "(loyalty.card) lorsqu'un seuil de solde de points restant est atteint, ou "
-        "lorsque l'échéance de validité de la carte approche. Configuration par défaut "
-        "au niveau du programme (loyalty.program), copiée sur chaque nouvelle carte et "
-        "overridable indépendamment ensuite."
+        "Sends an automatic reminder email to the holder of a loyalty card "
+        "(loyalty.card) when a threshold of remaining points balance is reached, or "
+        "when the card validity expiry date approaches. Default configuration "
+        "at program level (loyalty.program), copied onto every new card and "
+        "overridable independently afterwards."
     ),
     "author": "RemiFr82",
     "contributors": "",
