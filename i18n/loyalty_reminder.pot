@@ -138,6 +138,11 @@ msgid "Loyalty Program Reminder Line (Default Configuration)"
 msgstr ""
 
 #. module: loyalty_reminder
+#: model:ir.actions.server,name:loyalty_reminder.ir_cron_loyalty_reminder_ir_actions_server
+msgid "Loyalty Reminder: send threshold/expiry emails"
+msgstr ""
+
+#. module: loyalty_reminder
 #: model:ir.model.fields,help:loyalty_reminder.field_loyalty_program_reminder_line__days_before
 msgid ""
 "Number of days before the card expiry date (loyalty.card.expiration_date) "
