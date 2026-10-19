@@ -13,6 +13,17 @@ class TestLoyaltyReminder(TransactionCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
+        # `_cron_send_reminders` sweeps the whole database (`self.search([...])` ignores
+        # `self`), so every reminder line already in base -- starting with the ones this
+        # very module ships as demo data -- would be evaluated by every cron call below.
+        # The state of those lines is captured first, because the demo set is asserted
+        # from it, then they are switched off so no assertion of this suite depends on
+        # whether demo data is loaded. The cron itself must stay global:
+        # `test_two_cards_same_partner_same_expiry_window_send_two_emails` relies on it.
+        pre_existing = cls.env["loyalty.card.reminder.line"].with_context(
+            active_test=False).search([])
+        cls.pre_existing_active_line_ids = set(pre_existing.filtered("active").ids)
+        pre_existing.active = False
         cls.partner = cls.env["res.partner"].create({"name": "Test Customer"})
         cls.other_partner = cls.env["res.partner"].create({"name": "Other Customer"})
         cls.mail_template = cls._create_template("Threshold Template")
@@ -296,6 +307,71 @@ class TestLoyaltyReminder(TransactionCase):
         self.assertEqual(card_line.read(["points_remaining"])[0]["points_remaining"], 4)
         with self.assertRaises(AccessError):
             card_line.unlink()
+
+    # -- Hermeticity and demo data --------------------------------------
+
+    def test_cron_pass_is_insensitive_to_pre_existing_reminder_lines(self):
+        """Inverse of the usual rule: a test must not depend on demo data, but a cron
+        that queries the whole database is broken *by* the demo this module itself adds.
+        The guard asserted here is the neutralisation done in `setUpClass`: after it, a
+        cron pass finds no line left to evaluate outside the fixtures of a test."""
+        active_left = self.env["loyalty.card.reminder.line"].search(
+            [("id", "in", list(self.pre_existing_active_line_ids))])
+        self.assertFalse(active_left)
+
+        card = self._create_card(self.partner, points=1)
+        card._cron_send_reminders()
+        self.assertFalse(card.reminder_line_ids)
+        self.assertFalse(self.env["loyalty.card.reminder.line"].search(
+            [("card_id", "!=", card.id), ("active", "=", True)]))
+
+    def test_demo_data_extends_a_core_demo_program_without_creating_one(self):
+        """The module depends on `loyalty` only, so its demo cannot reference the family
+        pivot of `loyalty_expiration_management`. It extends the core coupon program by
+        external reference instead, and creates no `loyalty.program` of its own -- a
+        parallel program set would silently shadow the pivot, with no load error."""
+        lines = self._demo_program_lines()
+        core_program = self.env.ref("loyalty.10_percent_coupon")
+        self.assertEqual(lines.program_id, core_program)
+        self.assertEqual(
+            self.env["ir.model.data"].search_count([
+                ("module", "=", "loyalty_reminder"), ("model", "=", "loyalty.program")]),
+            0)
+
+    def test_demo_data_covers_both_triggers_and_the_already_sent_state(self):
+        """A reminder engine whose reminders are never seen demonstrates nothing: the
+        demo set has to make the module's behaviour legible in the UI with no prior
+        manipulation. Pinned here: both triggers configured at program level, a card
+        whose reminder has already been sent (deactivated line plus its chatter trace),
+        and a card-level override that differs from the program default."""
+        lines = self._demo_program_lines()
+        self.assertEqual(
+            set(lines.mapped("trigger_type")), {"points_remaining", "before_expiry"})
+
+        sent_line = self.env.ref("loyalty_reminder.card_reminder_line_sent_balance")
+        pending_line = self.env.ref("loyalty_reminder.card_reminder_line_pending_expiry")
+        self.assertNotIn(sent_line.id, self.pre_existing_active_line_ids)
+        self.assertIn(pending_line.id, self.pre_existing_active_line_ids)
+        self.assertTrue(self._reminder_message(sent_line.card_id))
+
+        override = self.env.ref("loyalty_reminder.card_reminder_line_custom_threshold")
+        program_default = lines.filtered(
+            lambda line: line.trigger_type == "points_remaining")
+        self.assertNotEqual(
+            override.points_remaining, program_default.points_remaining)
+
+    def _demo_program_lines(self):
+        lines = self.env["loyalty.program.reminder.line"].browse([
+            self.env.ref(f"loyalty_reminder.{xml_id}", raise_if_not_found=False).id
+            for xml_id in (
+                "program_reminder_line_coupon_expiry",
+                "program_reminder_line_coupon_last_use",
+            )
+            if self.env.ref(f"loyalty_reminder.{xml_id}", raise_if_not_found=False)
+        ])
+        if len(lines) != 2:
+            self.skipTest("demo data of loyalty_reminder is not loaded")
+        return lines
 
     def _reminder_message(self, card):
         subtype = self.env.ref("loyalty_reminder.mt_card_reminder_sent")
