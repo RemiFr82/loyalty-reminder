@@ -29,8 +29,8 @@
         communication plan (`loyalty.10_percent_coupon_communication`), whose template
         `loyalty.mail_template_loyalty_card` attaches the QWeb report
         `loyalty.report_loyalty_card`. Creating a card there renders a PDF inside the demo
-        load, which hangs indefinitely on an installation without a working wkhtmltopdf --
-        observed, not supposed. `3_cabinets_plus_1_free` carries no `loyalty.mail` at all,
+        load, which hangs indefinitely on an installation without a working wkhtmltopdf
+        (observed, not supposed). `3_cabinets_plus_1_free` carries no `loyalty.mail` at all,
         so card creation stays inert.
 
         Dates stay relative to the installation day through the `DateTime` /
