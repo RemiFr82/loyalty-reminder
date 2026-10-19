@@ -222,11 +222,9 @@ class TestLoyaltyReminder(TransactionCase):
         the effective lines a card already carries, override included: a later program
         change recomputes `reminder_line_ids` and leaves them untouched.
 
-        `reminder_line_ids` carries no `precompute=True`, so the copy is lazy: it happens
-        at the first materialisation of the field, not inside `create()`. Reading the
-        lines here is therefore not a convenience, it is the state the guard protects --
-        and that state is reached by anything that touches the field (the card form view,
-        or the `search` of `_cron_send_reminders`, whose flush recomputes it)."""
+        `reminder_line_ids` carries `precompute=True`, so the copy happens inside
+        `create()`: the state the guard protects is already reached here, and reading the
+        lines before the override is a convenience rather than a precondition."""
         self._add_program_line("points_remaining", self.mail_template, points_remaining=1)
         other_program = self.env["loyalty.program"].create({
             "name": "Other Program",
@@ -247,13 +245,13 @@ class TestLoyaltyReminder(TransactionCase):
         self.assertEqual(card.reminder_line_ids.trigger_type, "points_remaining")
         self.assertEqual(card.reminder_line_ids.points_remaining, 3)
 
-    def test_program_change_before_any_materialisation_retargets_the_copy(self):
-        """Flip side of the lazy copy, pinned here because it is the only window where a
-        program change changes what is copied: as long as nothing has read
-        `reminder_line_ids`, the single compute pass runs with the final `program_id` and
-        copies the lines of that program. No reminder can have been sent in that window,
-        so nothing is lost -- but the behaviour is read-order dependent, which is why it
-        is asserted rather than left implicit."""
+    def test_program_change_without_any_read_still_never_retargets_the_copy(self):
+        """Same guarantee as above, reached by the other path: nothing reads
+        `reminder_line_ids` between the creation and the program change. Before
+        `precompute=True` this was the one window where a program change did retarget
+        the copy, which made the behaviour depend on the read order; the copy now happens
+        inside `create()`, so the outcome no longer depends on who looked at the field
+        first. This test exists to pin exactly that."""
         self._add_program_line("points_remaining", self.mail_template, points_remaining=1)
         other_program = self.env["loyalty.program"].create({
             "name": "Other Program",
@@ -269,8 +267,8 @@ class TestLoyaltyReminder(TransactionCase):
 
         card.program_id = other_program
         self.assertEqual(len(card.reminder_line_ids), 1)
-        self.assertEqual(card.reminder_line_ids.trigger_type, "before_expiry")
-        self.assertEqual(card.reminder_line_ids.days_before, 30)
+        self.assertEqual(card.reminder_line_ids.trigger_type, "points_remaining")
+        self.assertEqual(card.reminder_line_ids.points_remaining, 1)
 
     def test_daily_cron_is_declared_on_the_card_model(self):
         cron = self.env.ref("loyalty_reminder.ir_cron_loyalty_reminder")

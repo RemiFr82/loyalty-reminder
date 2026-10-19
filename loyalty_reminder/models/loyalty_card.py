@@ -10,7 +10,7 @@ class LoyaltyCard(models.Model):
     reminder_line_ids = fields.One2many(
         "loyalty.card.reminder.line", "card_id", string="Reminder Lines",
         compute="_compute_reminder_line_ids", store=True, readonly=False, copy=True,
-        context={"active_test": False},
+        precompute=True, context={"active_test": False},
         help="Effective reminder lines of the card, copied from the program at creation "
              "then overridable independently. `active_test: False` is required here: "
              "`active` is only a display status (reminder already sent), not standard "
@@ -24,7 +24,14 @@ class LoyaltyCard(models.Model):
     def _compute_reminder_line_ids(self):
         """Emulate an onchange at creation: copy the program's default lines onto the
         card. Analogous to `_compute_event_mail_ids` (event/models/event_event.py),
-        never touches a line already overridden by the user."""
+        never touches a line already overridden by the user.
+
+        `precompute=True` on the field is what makes "at creation" literal: without it
+        the copy is lazy, so it only happens at the first read or flush of the field, and
+        a `program_id` written in between silently retargets it. Supplying
+        `reminder_line_ids` in the create values still suppresses the copy entirely
+        (`_add_precomputed_values` only completes the keys absent from the values), which
+        is how the demo data declares explicit lines."""
         for card in self:
             if not card.program_id or card.reminder_line_ids:
                 continue
