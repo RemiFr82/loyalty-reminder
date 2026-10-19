@@ -12,8 +12,8 @@
         follows the dependency graph, so those identifiers may simply not exist yet when
         this file loads. Everything below leans on the demo of the core instead:
 
-          - the program the reminders are configured on is the core coupon program
-            `loyalty.10_percent_coupon`, extended by external reference. No new
+          - the program the reminders are configured on is the core program
+            `loyalty.3_cabinets_plus_1_free`, extended by external reference. No new
             `loyalty.program` is created here, so nothing can shadow or duplicate the
             family pivot when both modules are installed.
           - the card holders are the core demo contacts `base.res_partner_address_*`,
@@ -24,10 +24,14 @@
         trace), one card that the next cron pass will remind, one card-level override, and
         the two cases that must never trigger (no expiry date, exhausted and expired).
 
-        Creating a card on `loyalty.10_percent_coupon` makes the core fire its own
-        `create`-triggered communication plan (`loyalty.10_percent_coupon_communication`),
-        which queues one `mail.mail` per card. That is core-designed behaviour on core demo
-        data, not a side effect of this module.
+        `loyalty.3_cabinets_plus_1_free` is chosen over the more obvious coupon program
+        `loyalty.10_percent_coupon` because that one carries a `create`-triggered
+        communication plan (`loyalty.10_percent_coupon_communication`), whose template
+        `loyalty.mail_template_loyalty_card` attaches the QWeb report
+        `loyalty.report_loyalty_card`. Creating a card there renders a PDF inside the demo
+        load, which hangs indefinitely on an installation without a working wkhtmltopdf --
+        observed, not supposed. `3_cabinets_plus_1_free` carries no `loyalty.mail` at all,
+        so card creation stays inert.
 
         Dates stay relative to the installation day through the `DateTime` /
         `relativedelta` helpers injected in the eval context by
@@ -52,7 +56,7 @@
                 <p>Hello <t t-out="object.partner_id.name or ''">Willie Burke</t>,</p>
                 <p>
                     Your card <t t-out="object.code or ''">044fd3a2</t>
-                    (<t t-out="object.program_id.name or ''">10% Discount Coupons</t>)
+                    (<t t-out="object.program_id.name or ''">Buy 3 large cabinets, get one for free</t>)
                     expires on <t t-out="format_date(object.expiration_date) or ''">05/05/2026</t>.
                 </p>
                 <p>There is still time to use it.</p>
@@ -72,7 +76,7 @@
                 <p>Hello <t t-out="object.partner_id.name or ''">Ron Gibson</t>,</p>
                 <p>
                     Your card <t t-out="object.code or ''">044fd3a2</t>
-                    (<t t-out="object.program_id.name or ''">10% Discount Coupons</t>)
+                    (<t t-out="object.program_id.name or ''">Buy 3 large cabinets, get one for free</t>)
                     only has <t t-out="object.points or 0">1</t> left.
                 </p>
                 <p>Renew it whenever you are ready.</p>
@@ -84,16 +88,16 @@
          Default configuration, carried by a core demo program
          ================================================================ -->
 
-    <record id="program_reminder_line_coupon_expiry" model="loyalty.program.reminder.line">
-        <field name="program_id" ref="loyalty.10_percent_coupon"/>
+    <record id="program_reminder_line_expiry" model="loyalty.program.reminder.line">
+        <field name="program_id" ref="loyalty.3_cabinets_plus_1_free"/>
         <field name="sequence">10</field>
         <field name="trigger_type">before_expiry</field>
         <field name="days_before">7</field>
         <field name="mail_template_id" ref="mail_template_card_expiry_reminder"/>
     </record>
 
-    <record id="program_reminder_line_coupon_last_use" model="loyalty.program.reminder.line">
-        <field name="program_id" ref="loyalty.10_percent_coupon"/>
+    <record id="program_reminder_line_last_use" model="loyalty.program.reminder.line">
+        <field name="program_id" ref="loyalty.3_cabinets_plus_1_free"/>
         <field name="sequence">20</field>
         <field name="trigger_type">points_remaining</field>
         <field name="points_remaining">1</field>
@@ -107,8 +111,8 @@
          ================================================================ -->
 
     <!-- Expiry within the 7-day window: the next cron pass reminds this one. -->
-    <record id="card_coupon_expiring_soon" model="loyalty.card">
-        <field name="program_id" ref="loyalty.10_percent_coupon"/>
+    <record id="card_expiring_soon" model="loyalty.card">
+        <field name="program_id" ref="loyalty.3_cabinets_plus_1_free"/>
         <field name="partner_id" ref="base.res_partner_address_1"/>
         <field name="points">4</field>
         <field name="expiration_date" eval="(DateTime.today() + relativedelta(days=5)).strftime('%Y-%m-%d')"/>
@@ -119,8 +123,8 @@
         compute does not copy the program lines over the two explicit lines below, which
         need their own xml_ids: the deactivated one is referenced by the chatter trace.
     -->
-    <record id="card_coupon_reminder_already_sent" model="loyalty.card">
-        <field name="program_id" ref="loyalty.10_percent_coupon"/>
+    <record id="card_reminder_already_sent" model="loyalty.card">
+        <field name="program_id" ref="loyalty.3_cabinets_plus_1_free"/>
         <field name="partner_id" ref="base.res_partner_address_2"/>
         <field name="points">1</field>
         <field name="expiration_date" eval="(DateTime.today() + relativedelta(days=60)).strftime('%Y-%m-%d')"/>
@@ -128,7 +132,7 @@
     </record>
 
     <record id="card_reminder_line_sent_balance" model="loyalty.card.reminder.line">
-        <field name="card_id" ref="card_coupon_reminder_already_sent"/>
+        <field name="card_id" ref="card_reminder_already_sent"/>
         <field name="sequence">10</field>
         <field name="trigger_type">points_remaining</field>
         <field name="points_remaining">1</field>
@@ -137,7 +141,7 @@
     </record>
 
     <record id="card_reminder_line_pending_expiry" model="loyalty.card.reminder.line">
-        <field name="card_id" ref="card_coupon_reminder_already_sent"/>
+        <field name="card_id" ref="card_reminder_already_sent"/>
         <field name="sequence">20</field>
         <field name="trigger_type">before_expiry</field>
         <field name="days_before">7</field>
@@ -146,7 +150,7 @@
 
     <record id="card_reminder_message_sent_balance" model="mail.message">
         <field name="model">loyalty.card</field>
-        <field name="res_id" eval="ref('card_coupon_reminder_already_sent')"/>
+        <field name="res_id" eval="ref('card_reminder_already_sent')"/>
         <field name="message_type">notification</field>
         <field name="subtype_id" ref="mt_card_reminder_sent"/>
         <field name="author_id" ref="base.partner_root"/>
@@ -154,15 +158,15 @@
     </record>
 
     <!-- Card-level override: threshold raised to 3, where the program says 1. -->
-    <record id="card_coupon_custom_threshold" model="loyalty.card">
-        <field name="program_id" ref="loyalty.10_percent_coupon"/>
+    <record id="card_custom_threshold" model="loyalty.card">
+        <field name="program_id" ref="loyalty.3_cabinets_plus_1_free"/>
         <field name="partner_id" ref="base.res_partner_address_3"/>
         <field name="points">6</field>
         <field name="reminder_line_ids" eval="[]"/>
     </record>
 
     <record id="card_reminder_line_custom_threshold" model="loyalty.card.reminder.line">
-        <field name="card_id" ref="card_coupon_custom_threshold"/>
+        <field name="card_id" ref="card_custom_threshold"/>
         <field name="sequence">10</field>
         <field name="trigger_type">points_remaining</field>
         <field name="points_remaining">3</field>
@@ -173,15 +177,15 @@
         No expiry date at all: the `before_expiry` line stays silent and raises nothing,
         which is what makes the module usable without loyalty_expiration_management.
     -->
-    <record id="card_coupon_without_expiry_date" model="loyalty.card">
-        <field name="program_id" ref="loyalty.10_percent_coupon"/>
+    <record id="card_without_expiry_date" model="loyalty.card">
+        <field name="program_id" ref="loyalty.3_cabinets_plus_1_free"/>
         <field name="partner_id" ref="base.res_partner_address_13"/>
         <field name="points">5</field>
     </record>
 
     <!-- Exhausted and already expired: neither trigger can ever fire on it. -->
-    <record id="card_coupon_exhausted_and_expired" model="loyalty.card">
-        <field name="program_id" ref="loyalty.10_percent_coupon"/>
+    <record id="card_exhausted_and_expired" model="loyalty.card">
+        <field name="program_id" ref="loyalty.3_cabinets_plus_1_free"/>
         <field name="partner_id" ref="base.res_partner_address_14"/>
         <field name="points">0</field>
         <field name="expiration_date" eval="(DateTime.today() - relativedelta(days=15)).strftime('%Y-%m-%d')"/>

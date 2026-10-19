@@ -325,11 +325,11 @@ class TestLoyaltyReminder(TransactionCase):
 
     def test_demo_data_extends_a_core_demo_program_without_creating_one(self):
         """The module depends on `loyalty` only, so its demo cannot reference the family
-        pivot of `loyalty_expiration_management`. It extends the core coupon program by
+        pivot of `loyalty_expiration_management`. It extends a core demo program by
         external reference instead, and creates no `loyalty.program` of its own -- a
         parallel program set would silently shadow the pivot, with no load error."""
         lines = self._demo_program_lines()
-        core_program = self.env.ref("loyalty.10_percent_coupon")
+        core_program = self.env.ref("loyalty.3_cabinets_plus_1_free")
         self.assertEqual(lines.program_id, core_program)
         self.assertEqual(
             self.env["ir.model.data"].search_count([
@@ -362,8 +362,8 @@ class TestLoyaltyReminder(TransactionCase):
         lines = self.env["loyalty.program.reminder.line"].browse([
             self.env.ref(f"loyalty_reminder.{xml_id}", raise_if_not_found=False).id
             for xml_id in (
-                "program_reminder_line_coupon_expiry",
-                "program_reminder_line_coupon_last_use",
+                "program_reminder_line_expiry",
+                "program_reminder_line_last_use",
             )
             if self.env.ref(f"loyalty_reminder.{xml_id}", raise_if_not_found=False)
         ])

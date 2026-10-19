@@ -1,7 +1,7 @@
 # License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl.html).
 {
     "name": "Loyalty Reminder",
-    "version": "17.0.1.2.1",
+    "version": "17.0.1.2.2",
     "summary": "Email reminders on loyalty card balance threshold or expiry date",
     "description": (
         "Sends an automatic reminder email to the holder of a loyalty card "
