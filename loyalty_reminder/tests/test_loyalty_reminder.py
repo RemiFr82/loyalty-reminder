@@ -323,6 +323,19 @@ class TestLoyaltyReminder(TransactionCase):
         self.assertFalse(self.env["loyalty.card.reminder.line"].search(
             [("card_id", "!=", card.id), ("active", "=", True)]))
 
+    def test_mail_templates_are_functional_data_independent_of_demo(self):
+        """The two reminder templates live in data/, not demo/: they must resolve and be
+        correctly configured whatever the demo state of the database, unlike the rest of
+        this suite's demo-dependent checks (`_demo_program_lines`). No `raise_if_not_found
+        =False` here on purpose -- a missing template on a `--without-demo=all` base would
+        be exactly the regression this test exists to catch."""
+        expiry_template = self.env.ref("loyalty_reminder.mail_template_card_expiry_reminder")
+        balance_template = self.env.ref("loyalty_reminder.mail_template_card_balance_reminder")
+        self.assertEqual(expiry_template.model, "loyalty.card")
+        self.assertEqual(balance_template.model, "loyalty.card")
+        self.assertTrue(expiry_template.body_html)
+        self.assertTrue(balance_template.body_html)
+
     def test_demo_data_extends_a_core_demo_program_without_creating_one(self):
         """The module depends on `loyalty` only, so its demo cannot reference the family
         pivot of `loyalty_expiration_management`. It extends a core demo program by

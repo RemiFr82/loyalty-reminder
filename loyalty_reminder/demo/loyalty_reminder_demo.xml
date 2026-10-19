@@ -39,53 +39,13 @@
     -->
 
     <!-- ================================================================
-         Reminder emails. The module ships no mail.template of its own,
-         while mail_template_id is required on both line models: these two
-         exist so the demo is self-sufficient.
-         ================================================================ -->
-
-    <record id="mail_template_card_expiry_reminder" model="mail.template">
-        <field name="name">Loyalty Card: Expiry Reminder</field>
-        <field name="model_id" ref="loyalty.model_loyalty_card"/>
-        <field name="subject">Your card expires soon</field>
-        <field name="partner_to">{{ object._get_mail_partner().id }}</field>
-        <field name="lang">{{ object._get_mail_partner().lang }}</field>
-        <field name="description">Sent to the holder of a loyalty card whose expiry date is approaching.</field>
-        <field name="body_html" type="html">
-            <div style="margin:0px; padding:0px; font-size:13px">
-                <p>Hello <t t-out="object.partner_id.name or ''">Willie Burke</t>,</p>
-                <p>
-                    Your card <t t-out="object.code or ''">044fd3a2</t>
-                    (<t t-out="object.program_id.name or ''">Buy 3 large cabinets, get one for free</t>)
-                    expires on <t t-out="format_date(object.expiration_date) or ''">05/05/2026</t>.
-                </p>
-                <p>There is still time to use it.</p>
-            </div>
-        </field>
-    </record>
-
-    <record id="mail_template_card_balance_reminder" model="mail.template">
-        <field name="name">Loyalty Card: Remaining Balance Reminder</field>
-        <field name="model_id" ref="loyalty.model_loyalty_card"/>
-        <field name="subject">Your card is running low</field>
-        <field name="partner_to">{{ object._get_mail_partner().id }}</field>
-        <field name="lang">{{ object._get_mail_partner().lang }}</field>
-        <field name="description">Sent to the holder of a loyalty card whose remaining balance has reached the configured threshold.</field>
-        <field name="body_html" type="html">
-            <div style="margin:0px; padding:0px; font-size:13px">
-                <p>Hello <t t-out="object.partner_id.name or ''">Ron Gibson</t>,</p>
-                <p>
-                    Your card <t t-out="object.code or ''">044fd3a2</t>
-                    (<t t-out="object.program_id.name or ''">Buy 3 large cabinets, get one for free</t>)
-                    only has <t t-out="object.points or 0">1</t> left.
-                </p>
-                <p>Renew it whenever you are ready.</p>
-            </div>
-        </field>
-    </record>
-
-    <!-- ================================================================
-         Default configuration, carried by a core demo program
+         Default configuration, carried by a core demo program. The two
+         mail.template records referenced below (mail_template_card_
+         expiry_reminder / mail_template_card_balance_reminder) are
+         functional data, not demo: they live in
+         data/mail_template_data.xml, loaded before this file regardless
+         of demo being enabled, since mail_template_id is required on
+         both line models and no other template ships with the module.
          ================================================================ -->
 
     <record id="program_reminder_line_expiry" model="loyalty.program.reminder.line">
